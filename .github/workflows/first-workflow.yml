@@ -5,7 +5,7 @@ on:
     branches: [main]
   
 env: 
-  NODE_VERSION_VARIABLE: 'Latest'
+  NODE_VERSION_VARIABLE: '14'
   
 
 jobs:
