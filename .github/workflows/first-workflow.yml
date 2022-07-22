@@ -1,25 +1,41 @@
-name: First workflow
+name: First-Workflow
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  
+env: 
+  NODE_VERSION_VARIABLE: '14'
+  
 
 jobs:
-  build:
-
+  mongo_test:
     runs-on: ubuntu-latest
 
-    steps:
-        # descargar y hacer un checkout sobre tu repositorio para que puedas acceder a el dentro del job
+    services:
+      mongoDB:
+        image: mongo
+        env:
+          MONGO_INITDB_DATABASE: notes_app_db
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
+    steps: 
       - name: checkout branch
         uses: actions/checkout@v3
       
-      - name: ejecutar script de una linea
-        run: echo Hello, world
+      - name: install nodeJS environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION_VARIABLE }}
 
-      - name: ejecutar multilinea
-        run: |
-          echo add other actions to the build
-          echo test, and deploy your project
+      - name: run node install
+        run: npm install
+
+      - name: run integration tests
+        run: npm run integTest
